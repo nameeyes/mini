@@ -69,7 +69,16 @@ message.channel.send(ayuda)
         .addField()
         message.channel.send(roleplay)
         message.delete(menu)
-}
+      }
+        if(subcomando === "EMS"){
+          const EMS = new Discord.RichEmbed()
+            .setColor()
+          .setTitle ('(Comandos Ems')
+          .addField()
+          .addField()
+          message.channel.send(roleplay)
+          message.delete(menu)
+      }
      const menu = new Discord.RichEmbed()
    .setColor(0x006666)
    .setTitle(`${emoji} Comandos:`)
