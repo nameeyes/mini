@@ -15,5 +15,7 @@ const embed = new Discord.RichEmbed()
 .addField('📯ping📯',"<@&524006130041749509>")
 .setFooter('⌚ Hora:')
 .setTimestamp()
-client.channels.get('524022732745211937').send(embed);
+client.channels.get('524327484229943306').send(embed);
+  client.channels.get('524327484229943306').send("<@&485203213084131329>")
 }
+ 

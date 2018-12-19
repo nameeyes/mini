@@ -1,40 +1,81 @@
+// NOTE:
+// The following code is part of the <client>.on('message') event:
+// Modules Required: quick.db
 
-/**
- * @file afk command
- * @author Sankarsan Kampa (a.k.a k3rn31p4nic)
- * @license GPL-3.0
- */
 
-exports.exec = async (Bastion, message) => {
-  if (!message.guild.usersAFK) message.guild.usersAFK = [];
-  if (message.guild.usersAFK.includes(message.author.id)) return;
+// Access the 'AFK' table w/ Quick.db
+let status = new db.table('AFKs');
 
-  message.guild.usersAFK.push(message.author.id);
+// Check if author is AFK
+let authorStatus = await afk.fetch(message.author.id);
 
-  await message.channel.send({
-    embed: {
-      color: Bastion.colors.GREEN,
-      description: `${message.author} I've set you as AFK. If anyone mentions you while you're away, I'll let them know. AFK mode will be disabled once you're back and send a message anywhere.`
-    }
-  }).catch(e => {
-    Bastion.log.error(e);
-  });
-};
+if (authorStatus) { // Run if they are AFK
 
-exports.config = {
-  aliases: [],
-  enabled: true,
-  argsDefinitions: [
-    { name: 'message', type: String, alias: 'm', defaultOption: true }
-  ]
-};
+  const embed = new Discord.MessageEmbed()
+    .setColor(0xffffff)
+    .setFooter(`${message.author.username} is no longer AFK.`)
+	
+  // Send a 'You are no longer AFK message'
+  message.channel.send(embed).then(i => i.delete({
+    timeout: 5000
+  }))
+  
+  // This will delete the user from the AFK pool in the database
+  afk.delete(message.author.id);
 
-exports.help = {
-  name: 'afk',
-  description: 'Sets you as Away From Keyboard (AFK). So when someone mentions you, Bastion will let them know that you\'re AFK. It\'ll be automatically disabled once you are back.',
-  botPermission: '',
-  userTextPermission: '',
-  userVoicePermission: '',
-  usage: 'afk',
-  example: []
-};
+}
+
+let mentioned = message.mentions.members.first(); // This will store the first member mentioned
+if (mentioned) { // This will run if a member is mentioned
+
+  // Access AFK Status
+  let status = await afk.fetch(mentioned.id);
+
+  if (status) { // This will run if they are AFK (since the db will return true)
+
+    // Form Embed
+    const embed = new Discord.MessageEmbed()
+      .setColor(0xffffff)
+      .setFooter(status);
+
+    // Send Embed
+    message.channel.send(embed);
+
+  }
+
+}
+
+
+// NOTE:
+// The following code is a command:
+
+
+const Discord = require('discord.js'),
+  	  db = require('quick.db');
+
+exports.run = async (client, message, args, tools) => {
+
+  // Create a new 'AFK' table w/ Quick.db
+  const status = new db.table('AFKs');
+
+  // Fetch user object from that table
+  let afk = await status.fetch(message.author.id);
+
+  // Form Embed
+  const embed = new Discord.MessageEmbed()
+    .setColor(0xffffff)
+
+  if (!afk) { // Run if they are NOT afk, or afk is null
+    embed.setFooter('You are now AFK.'); // Modify Embed
+    // Add the user to the AFK pool
+    status.set(message.author.id, args.join(' ') || `Sorry, ${message.author.username} is AFK.`);
+  } else { // Run if they ARE afk
+    embed.setFooter('You are no longer AFK.'); // Modify Embed
+    // Remove the user from the AFK pool
+    status.delete(message.author.id);
+  }
+
+  // Send Embed
+  message.channel.send(embed);
+
+}

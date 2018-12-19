@@ -63,22 +63,26 @@ message.channel.send(ayuda)
       }
       if(subcomando === "roleplay"){
         const roleplay = new Discord.RichEmbed()
-          .setColor()
+          .setColor(0xff5050)
         .setTitle('Comands roleplay')
-        .addField()
-        .addField()
+        .addField('911',"llama con ``m!911`` al servicio de emergencias")
+        .addField('Policia',"pendiete de finalizar todos los comandos")
+        .addField('EMS',"pendiente de finalizar todos los comandos")
+        .addField('Entregar objetos',"pon ``m!give (el objeto) para dar un objeto")
+        .addField('Ponerse algo',"pon ``m!put (el objeto) para ponerte una prenda encima")
+        .addField('Guia telefónica',"para pedir la guia telefonica pon ``m!guia tel``")
         message.channel.send(roleplay)
         message.delete(menu)
       }
-        if(subcomando === "EMS"){
-          const EMS = new Discord.RichEmbed()
-            .setColor()
-          .setTitle ('(Comandos Ems')
-          .addField()
-          .addField()
-          message.channel.send(roleplay)
-          message.delete(menu)
-      }
+  if(subcomando === "EMS"){
+    const EMS = new Discord.RichEmbed()
+    .setColor()
+    .setTitle('Comandos EMS')
+    .addField()
+    .addField()
+    message.channel.send(EMS)
+      message.delete(menu)
+}
      const menu = new Discord.RichEmbed()
    .setColor(0x006666)
    .setTitle(`${emoji} Comandos:`)
